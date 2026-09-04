@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>IELTS Journey - Admin Panel</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:#f4f6f9;
+    color:#222;
+}
+
+button,input,textarea,select{
+    font-family:inherit;
+}
+
+.hidden{
+    display:none!important;
+}
+
+/* LOGIN */
+
+#loginPage{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.login-box{
+    width:100%;
+    max-width:420px;
+    background:white;
+    padding:30px 24px;
+    border-radius:18px;
+    box-shadow:0 10px 35px rgba(0,0,0,.12);
+}
+
+.login-logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.login-logo i{
+    font-size:50px;
+    color:#2563eb;
+    margin-bottom:10px;
+}
+
+.login-logo h1{
+    font-size:24px;
+}
+
+.login-logo p{
+    color:#777;
+    margin-top:6px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-weight:bold;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    padding:12px 13px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+    border-color:#2563eb;
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+.btn{
+    border:0;
+    border-radius:10px;
+    padding:11px 16px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.btn-primary{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc2626;
+    color:white;
+}
+
+.btn-success{
+    background:#16a34a;
+    color:white;
+}
+
+.btn-secondary{
+    background:#64748b;
+    color:white;
+}
+
+.btn-warning{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-full{
+    width:100%;
+}
+
+.error{
+    color:#dc2626;
+    background:#fee2e2;
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:15px;
+    display:none;
+}
+
+/* ADMIN */
+
+#adminPage{
+    min-height:100vh;
+}
+
+.topbar{
+    background:#111827;
+    color:white;
+    padding:14px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.topbar h2{
+    font-size:18px;
+}
+
+.topbar small{
+    color:#cbd5e1;
+}
+
+.logout-btn{
+    background:#dc2626;
+    color:white;
+    border:0;
+    padding:9px 13px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.layout{
+    display:flex;
+    min-height:calc(100vh - 60px);
+}
+
+.sidebar{
+    width:240px;
+    background:white;
+    border-right:1px solid #ddd;
+    padding:15px;
+    flex-shrink:0;
+}
+
+.sidebar button{
+    width:100%;
+    text-align:left;
+    border:0;
+    background:transparent;
+    padding:12px;
+    margin-bottom:5px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.sidebar button:hover,
+.sidebar button.active{
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+.sidebar i{
+    width:25px;
+}
+
+.content{
+    flex:1;
+    padding:20px;
+    max-width:1400px;
+    margin:auto;
+    width:100%;
+}
+
+.section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+.section-title{
+    margin-bottom:20px;
+}
+
+.section-title h2{
+    font-size:24px;
+}
+
+.section-title p{
+    color:#777;
+    margin-top:5px;
+}
+
+/* DASHBOARD CARDS */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.card .icon{
+    font-size:25px;
+    margin-bottom:10px;
+    color:#2563eb;
+}
+
+.card h3{
+    font-size:28px;
+}
+
+.card p{
+    color:#777;
+    margin-top:5px;
+}
+
+/* PANEL */
+
+.panel{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    margin-bottom:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.05);
+}
+
+.panel h3{
+    margin-bottom:15px;
+}
+
+.grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.form-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+/* ITEMS */
+
+.item{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:12px;
+}
+
+.item h4{
+    margin-bottom:7px;
+}
+
+.item p{
+    color:#666;
+    line-height:1.5;
+    margin-bottom:7px;
+}
+
+.item-meta{
+    font-size:13px;
+    color:#777;
+    margin-bottom:10px;
+}
+
+.item-actions{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+}
+
+.badge{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:20px;
+    font-size:12px;
+    background:#e0e7ff;
+    color:#3730a3;
+}
+
+/* TABLE */
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:650px;
+}
+
+th,td{
+    border-bottom:1px solid #eee;
+    padding:11px;
+    text-align:left;
+    font-size:14px;
+}
+
+th{
+    background:#f8fafc;
+}
+
+/* TOAST */
+
+#toast{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    background:#111827;
+    color:white;
+    padding:13px 17px;
+    border-radius:10px;
+    display:none;
+    z-index:999;
+    max-width:320px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .sidebar{
+        width:70px;
+        padding:8px;
+    }
+
+    .sidebar button{
+        text-align:center;
+        padding:12px 5px;
+    }
+
+    .sidebar button span{
+        display:none;
+    }
+
+    .sidebar i{
+        width:auto;
+        font-size:18px;
+    }
+
+    .grid-2{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:600px){
+
+    .topbar{
+        padding:12px;
+    }
+
+    .topbar h2{
+        font-size:15px;
+    }
+
+    .content{
+        padding:12px;
+    }
+
+    .cards{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .card{
+        padding:14px;
+    }
+
+    .card h3{
+        font-size:22px;
+    }
+
+    .panel{
+        padding:15px;
+    }
+
+    .section-title h2{
+        font-size:21px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<div id="loginPage">
+
+    <div class="login-box">
+
+        <div class="login-logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <h1>IELTS Journey</h1>
+            <p>Admin Panel</p>
+        </div>
+
+        <div id="loginError" class="error"></div>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Admin email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Password"
+                    required
+                >
+            </div>
+
+            <button class="btn btn-primary btn-full" type="submit">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Login
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= ADMIN ================= -->
+
+<div id="adminPage" class="hidden">
+
+    <div class="topbar">
+
+        <div>
+            <h2>
+                <i class="fa-solid fa-graduation-cap"></i>
+                IELTS Journey Admin
+            </h2>
+            <small id="adminEmail"></small>
+        </div>
+
+        <button class="logout-btn" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </button>
+
+    </div>
+
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <button class="active" onclick="showSection('dashboard',this)">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </button>
+
+            <button onclick="showSection('about',this)">
+                <i class="fa-solid fa-user"></i>
+                <span>About Me</span>
+            </button>
+
+            <button onclick="showSection('lessons',this)">
+                <i class="fa-solid fa-book"></i>
+                <span>Lessons</span>
+            </button>
+
+            <button onclick="showSection('news',this)">
+                <i class="fa-solid fa-newspaper"></i>
+                <span>News</span>
+            </button>
+
+            <button onclick="showSection('zoom',this)">
+                <i class="fa-solid fa-video"></i>
+                <span>Zoom Class</span>
+            </button>
+
+            <button onclick="showSection('support',this)">
+                <i class="fa-solid fa-comments"></i>
+                <span>Support</span>
+            </button>
+
+            <button onclick="showSection('users',this)">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </button>
+
+        </aside>
+
+
+        <!-- CONTENT -->
+
+        <main class="content">
+
+            <!-- DASHBOARD -->
+
+            <section id="dashboard" class="section active">
+
+                <div class="section-title">
+                    <h2>Dashboard</h2>
+                    <p>আপনার IELTS Journey website-এর overview</p>
+                </div>
+
+                <div class="cards">
+
+                    <div class="card">
+                        <div class="icon">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                        <h3 id="lessonCount">0</h3>
+                        <p>Lessons</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">
+                            <i class="fa-solid fa-newspaper"></i>
+                        </div>
+                        <h3 id="newsCount">0</h3>
+                        <p>News</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <h3 id="userCount">0</h3>
+                        <p>Users</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">
+                            <i class="fa-solid fa-eye"></i>
+                        </div>
+                        <h3 id="visitorCount">0</h3>
+                        <p>Visitors</p>
+                    </div>
+
+                </div>
+
+                <div class="panel">
+
+                    <h3>
+                        <i class="fa-solid fa-circle-info"></i>
+                        Admin Information
+                    </h3>
+
+                    <p>
+                        এখান থেকে আপনার website-এর Lesson, News,
+                        About Me, Zoom Class এবং Support Messages
+                        পরিচালনা করতে পারবেন।
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ABOUT -->
+
+            <section id="about" class="section">
+
+                <div class="section-title">
+                    <h2>About Me</h2>
+                    <p>Website-এর About section পরিবর্তন করুন</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="grid-2">
+
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input id="aboutName" type="text">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Profile Image URL</label>
+                            <input id="aboutImage" type="url">
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea id="aboutBio"></textarea>
+                    </div>
+
+                    <div class="grid-2">
+
+                        <div class="form-group">
+                            <label>Facebook URL</label>
+                            <input id="aboutFacebook" type="url">
+                        </div>
+
+                        <div class="form-group">
+                            <label>YouTube URL</label>
+                            <input id="aboutYoutube" type="url">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Instagram URL</label>
+                            <input id="aboutInstagram" type="url">
+                        </div>
+
+                        <div class="form-group">
+                            <label>WhatsApp URL</label>
+                            <input id="aboutWhatsapp" type="url">
+                        </div>
+
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveAbout()">
+                        <i class="fa-solid fa-save"></i>
+                        Save About
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- LESSONS -->
+
+            <section id="lessons" class="section">
+
+                <div class="section-title">
+                    <h2>Lessons</h2>
+                    <p>Lesson তৈরি, Edit অথবা Delete করুন</p>
+                </div>
+
+                <div class="panel">
+
+                    <h3 id="lessonFormTitle">
+                        Add New Lesson
+                    </h3>
+
+                    <input type="hidden" id="lessonId">
+
+                    <div class="grid-2">
+
+                        <div class="form-group">
+                            <label>Lesson Title *</label>
+                            <input id="lessonTitle" type="text">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Category *</label>
+
+                            <select id="lessonCategory">
+
+                                <option value="listening">Listening</option>
+                                <option value="reading">Reading</option>
+                                <option value="writing">Writing</option>
+                                <option value="speaking">Speaking</option>
+                                <option value="grammar">Grammar</option>
+                                <option value="vocabulary">Vocabulary</option>
+                                <option value="other">Other</option>
+
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="lessonDescription"></textarea>
+                    </div>
+
+                    <div class="grid-2">
+
+                        <div class="form-group">
+                            <label>YouTube Video URL</label>
+                            <input id="lessonVideo" type="url"
+                                   placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+
+                        <div class="form-group">
+                            <label>PDF URL</label>
+                            <input id="lessonPdf" type="url">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Thumbnail URL</label>
+                            <input id="lessonThumb" type="url">
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button class="btn btn-primary"
+                                onclick="saveLesson()">
+
+                            <i class="fa-solid fa-save"></i>
+                            Save Lesson
+
+                        </button>
+
+                        <button class="btn btn-secondary"
+                                onclick="resetLessonForm()">
+
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Reset
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h3>All Lessons</h3>
+
+                    <div id="lessonsList">
+                        Loading...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- NEWS -->
+
+            <section id="news" class="section">
+
+                <div class="section-title">
+                    <h2>News</h2>
+                    <p>Website-এর News পরিচালনা করুন</p>
+                </div>
+
+                <div class="panel">
+
+                    <h3 id="newsFormTitle">
+                        Add News
+                    </h3>
+
+                    <input type="hidden" id="newsId">
+
+                    <div class="form-group">
+                        <label>News Title *</label>
+                        <input id="newsTitle" type="text">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="newsDescription"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input id="newsDate" type="date">
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button class="btn btn-primary"
+                                onclick="saveNews()">
+
+                            <i class="fa-solid fa-save"></i>
+                            Save News
+
+                        </button>
+
+                        <button class="btn btn-secondary"
+                                onclick="resetNewsForm()">
+
+                            Reset
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h3>All News</h3>
+
+                    <div id="newsList">
+                        Loading...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ZOOM -->
+
+            <section id="zoom" class="section">
+
+                <div class="section-title">
+                    <h2>Zoom Class</h2>
+                    <p>Live Zoom class-এর তথ্য পরিবর্তন করুন</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="form-group">
+                        <label>Class Title</label>
+                        <input id="zoomTitle">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="zoomDescription"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Zoom Meeting URL</label>
+                        <input id="zoomLink" type="url">
+                    </div>
+
+                    <button class="btn btn-primary"
+                            onclick="saveZoom()">
+
+                        <i class="fa-solid fa-save"></i>
+                        Save Zoom Settings
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- SUPPORT -->
+
+            <section id="support" class="section">
+
+                <div class="section-title">
+                    <h2>Support Messages</h2>
+                    <p>Users-এর পাঠানো support message দেখুন</p>
+                </div>
+
+                <div class="panel">
+
+                    <div id="supportList">
+                        Loading...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- USERS -->
+
+            <section id="users" class="section">
+
+                <div class="section-title">
+                    <h2>Users</h2>
+                    <p>Website-এর registered users</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="table-wrap">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>WhatsApp</th>
+                                    <th>Created</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="usersList"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<div id="toast"></div>
+
+
+<script>
+
+/* ================= FIREBASE ================= */
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyAwzAvZrNs9ulHlSROQRnPz5tY_I3N-OT8K",
+
+    authDomain:
+        "ielts-journey-with-hossain.firebaseapp.com",
+
+    databaseURL:
+        "https://ielts-journey-with-hossain-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+    projectId:
+        "ielts-journey-with-hossain",
+
+    storageBucket:
+        "ielts-journey-with-hossain.firebasestorage.app",
+
+    messagingSenderId:
+        "327654129642",
+
+    appId:
+        "1:327654129642:web:b9e04fe47c7b54b20abc93",
+
+    measurementId:
+        "G-H3MKTLJR4K"
+
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.database();
+const auth = firebase.auth();
+
+
+/* ================= GLOBAL ================= */
+
+let listenersStarted = false;
+
+
+/* ================= HELPERS ================= */
+
+function showToast(message){
+
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.style.display = "block";
+
+    setTimeout(()=>{
+        toast.style.display = "none";
+    },3000);
+}
+
+
+function escapeHTML(value){
+
+    if(value === undefined || value === null){
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function safeURL(value){
+
+    if(!value){
+        return "";
+    }
+
+    try{
+
+        const url = new URL(value);
+
+        if(url.protocol === "http:" ||
+           url.protocol === "https:"){
+
+            return value;
+
+        }
+
+    }catch(e){}
+
+    return "";
+}
+
+
+function formatDate(timestamp){
+
+    if(!timestamp){
+        return "-";
+    }
+
+    return new Date(timestamp).toLocaleString("bn-BD");
+
+}
+
+
+/* ================= LOGIN ================= */
+
+document.getElementById("loginForm")
+.addEventListener("submit",async function(e){
+
+    e.preventDefault();
+
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    const errorBox =
+        document.getElementById("loginError");
+
+    errorBox.style.display = "none";
+
+    try{
+
+        await auth.signInWithEmailAndPassword(
+            email,
+            password
+        );
+
+    }catch(error){
+
+        errorBox.textContent =
+            getFirebaseError(error);
+
+        errorBox.style.display = "block";
+
+    }
+
+});
+
+
+function getFirebaseError(error){
+
+    if(!error){
+        return "কিছু একটা সমস্যা হয়েছে।";
+    }
+
+    const code = error.code || "";
+
+    if(code.includes("invalid-login-credentials") ||
+       code.includes("wrong-password") ||
+       code.includes("user-not-found")){
+
+        return "Email অথবা Password ভুল।";
+
+    }
+
+    if(code.includes("too-many-requests")){
+
+        return "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।";
+
+    }
+
+    return error.message || "Login failed.";
+
+}
+
+
+/* ================= AUTH STATE ================= */
+
+auth.onAuthStateChanged(async(user)=>{
+
+    if(!user){
+
+        document
+            .getElementById("loginPage")
+            .classList.remove("hidden");
+
+        document
+            .getElementById("adminPage")
+            .classList.add("hidden");
+
+        return;
+    }
+
+    try{
+
+        const snapshot =
+            await db.ref("admins/" + user.uid).once("value");
+
+        const isAdmin = snapshot.val() === true;
+
+        if(!isAdmin){
+
+            alert(
+                "এই account-এর Admin permission নেই।"
+            );
+
+            await auth.signOut();
+
+            return;
+        }
+
+        document
+            .getElementById("loginPage")
+            .classList.add("hidden");
+
+        document
+            .getElementById("adminPage")
+            .classList.remove("hidden");
+
+        document
+            .getElementById("adminEmail")
+            .textContent = user.email;
+
+        startListeners();
+
+    }catch(error){
+
+        alert(
+            "Admin permission যাচাই করা যায়নি: "
+            + error.message
+        );
+
+        await auth.signOut();
+
+    }
+
+});
+
+
+/* ================= LOGOUT ================= */
+
+async function logout(){
+
+    await auth.signOut();
+
+}
+
+
+/* ================= NAVIGATION ================= */
+
+function showSection(id,button){
+
+    document
+        .querySelectorAll(".section")
+        .forEach(section=>{
+            section.classList.remove("active");
+        });
+
+    document
+        .querySelectorAll(".sidebar button")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+    if(button){
+        button.classList.add("active");
+    }
+
+}
+
+
+/* ================= LISTENERS ================= */
+
+function startListeners(){
+
+    if(listenersStarted){
+        return;
+    }
+
+    listenersStarted = true;
+
+
+    /* ABOUT */
+
+    db.ref("about").on("value",(snapshot)=>{
+
+        const data = snapshot.val() || {};
+
+        document.getElementById("aboutName").value =
+            data.name || "";
+
+        document.getElementById("aboutBio").value =
+            data.bio || "";
+
+        document.getElementById("aboutImage").value =
+            data.profileImage || "";
+
+        document.getElementById("aboutFacebook").value =
+            data.facebook || "";
+
+        document.getElementById("aboutYoutube").value =
+            data.youtube || "";
+
+        document.getElementById("aboutInstagram").value =
+            data.instagram || "";
+
+        document.getElementById("aboutWhatsapp").value =
+            data.whatsapp || "";
+
+    });
+
+
+    /* LESSONS */
+
+    db.ref("lessons").on("value",(snapshot)=>{
+
+        const data = snapshot.val() || {};
+
+        const keys = Object.keys(data);
+
+        document.getElementById("lessonCount")
+            .textContent = keys.length;
+
+        renderLessons(data);
+
+    });
+
+
+    /* NEWS */
+
+    db.ref("news").on("value",(snapshot)=>{
+
+        const data = snapshot.val() || {};
+
+        const keys = Object.keys(data);
+
+        document.getElementById("newsCount")
+            .textContent = keys.length;
+
+        renderNews(data);
+
+    });
+
+
+    /* USERS */
+
+    db.ref("users").on("value",(snapshot)=>{
+
+        const data = snapshot.val() || {};
+
+        const keys = Object.keys(data);
+
+        document.getElementById("userCount")
+            .textContent = keys.length;
+
+        renderUsers(data);
+
+    });
+
+
+    /* VISITORS */
+
+    db.ref("visitorCount").on("value",(snapshot)=>{
+
+        document.getElementById("visitorCount")
+            .textContent = snapshot.val() || 0;
+
+    });
+
+
+    /* ZOOM */
+
+    db.ref("settings/zoom").on("value",(snapshot)=>{
+
+        const data = snapshot.val() || {};
+
+        document.getElementById("zoomTitle").value =
+            data.title || "";
+
+        document.getElementById("zoomDescription").value =
+            data.description || "";
+
+        document.getElementById("zoomLink").value =
+            data.link || "";
+
+    });
+
+
+    /* SUPPORT */
+
+    db.ref("support-tickets").on("value",(snapshot)=>{
+
+        const data = snapshot.val() || {};
+
+        renderSupport(data);
+
+    });
+
+}
+
+
+/* ================= ABOUT ================= */
+
+async function saveAbout(){
+
+    const data = {
+
+        name:
+            document.getElementById("aboutName").value.trim(),
+
+        bio:
+            document.getElementById("aboutBio").value.trim(),
+
+        profileImage:
+            safeURL(
+                document.getElementById("aboutImage").value.trim()
+            ),
+
+        facebook:
+            safeURL(
+                document.getElementById("aboutFacebook").value.trim()
+            ),
+
+        youtube:
+            safeURL(
+                document.getElementById("aboutYoutube").value.trim()
+            ),
+
+        instagram:
+            safeURL(
+                document.getElementById("aboutInstagram").value.trim()
+            ),
+
+        whatsapp:
+            safeURL(
+                document.getElementById("aboutWhatsapp").value.trim()
+            ),
+
+        updatedAt:
+            firebase.database.ServerValue.TIMESTAMP
+
+    };
+
+    try{
+
+        await db.ref("about").update(data);
+
+        showToast("About Me সফলভাবে Save হয়েছে।");
+
+    }catch(error){
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* ================= LESSON ================= */
+
+async function saveLesson(){
+
+    const id =
+        document.getElementById("lessonId").value;
+
+    const title =
+        document.getElementById("lessonTitle")
+        .value.trim();
+
+    const category =
+        document.getElementById("lessonCategory")
+        .value;
+
+    const description =
+        document.getElementById("lessonDescription")
+        .value.trim();
+
+    const video =
+        safeURL(
+            document.getElementById("lessonVideo")
+            .value.trim()
+        );
+
+    const pdf =
+        safeURL(
+            document.getElementById("lessonPdf")
+            .value.trim()
+        );
+
+    const thumb =
+        safeURL(
+            document.getElementById("lessonThumb")
+            .value.trim()
+        );
+
+
+    if(!title){
+
+        showToast("Lesson title দিন।");
+        return;
+
+    }
+
+
+    const data = {
+
+        title,
+        category,
+        description,
+        video,
+        pdf,
+        thumb,
+        updatedAt:
+            firebase.database.ServerValue.TIMESTAMP
+
+    };
+
+
+    try{
+
+        if(id){
+
+            await db
+                .ref("lessons/" + id)
+                .update(data);
+
+            showToast("Lesson updated হয়েছে।");
+
+        }else{
+
+            data.createdAt =
+                firebase.database.ServerValue.TIMESTAMP;
+
+            await db
+                .ref("lessons")
+                .push(data);
+
+            showToast("নতুন Lesson তৈরি হয়েছে।");
+
+        }
+
+        resetLessonForm();
+
+    }catch(error){
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* ================= RENDER LESSONS ================= */
+
+function renderLessons(data){
+
+    const container =
+        document.getElementById("lessonsList");
+
+    const entries =
+        Object.entries(data)
+        .sort((a,b)=>
+            (b[1].createdAt || 0) -
+            (a[1].createdAt || 0)
+        );
+
+
+    if(entries.length === 0){
+
+        container.innerHTML =
+            "<p>কোনো Lesson নেই।</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        entries.map(([id,item])=>{
+
+            return `
+
+            <div class="item">
+
+                <h4>
+                    ${escapeHTML(item.title)}
+                </h4>
+
+                <div class="item-meta">
+
+                    <span class="badge">
+                        ${escapeHTML(item.category || "other")}
+                    </span>
+
+                    &nbsp;
+                    ${formatDate(item.createdAt)}
+
+                </div>
+
+                <p>
+                    ${escapeHTML(item.description || "")}
+                </p>
+
+                <div class="item-actions">
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="editLesson('${id}')">
+
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+
+                    </button>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteLesson('${id}')">
+
+                        <i class="fa-solid fa-trash"></i>
+                        Delete
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* ================= EDIT LESSON ================= */
+
+async function editLesson(id){
+
+    const snapshot =
+        await db.ref("lessons/" + id).once("value");
+
+    const data = snapshot.val();
+
+    if(!data){
+        return;
+    }
+
+    document.getElementById("lessonId").value = id;
+
+    document.getElementById("lessonTitle").value =
+        data.title || "";
+
+    document.getElementById("lessonCategory").value =
+        data.category || "other";
+
+    document.getElementById("lessonDescription").value =
+        data.description || "";
+
+    document.getElementById("lessonVideo").value =
+        data.video || "";
+
+    document.getElementById("lessonPdf").value =
+        data.pdf || "";
+
+    document.getElementById("lessonThumb").value =
+        data.thumb || "";
+
+    document.getElementById("lessonFormTitle")
+        .textContent = "Edit Lesson";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* ================= DELETE LESSON ================= */
+
+async function deleteLesson(id){
+
+    if(!confirm("এই Lesson Delete করতে চান?")){
+        return;
+    }
+
+    try{
+
+        await db.ref("lessons/" + id).remove();
+
+        showToast("Lesson Delete হয়েছে।");
+
+    }catch(error){
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* ================= RESET LESSON ================= */
+
+function resetLessonForm(){
+
+    document.getElementById("lessonId").value = "";
+
+    document.getElementById("lessonTitle").value = "";
+
+    document.getElementById("lessonCategory").value =
+        "listening";
+
+    document.getElementById("lessonDescription").value = "";
+
+    document.getElementById("lessonVideo").value = "";
+
+    document.getElementById("lessonPdf").value = "";
+
+    document.getElementById("lessonThumb").value = "";
+
+    document.getElementById("lessonFormTitle")
+        .textContent = "Add New Lesson";
+
+}
+
+
+/* ================= NEWS ================= */
+
+async function saveNews(){
+
+    const id =
+        document.getElementById("newsId").value;
+
+    const title =
+        document.getElementById("newsTitle")
+        .value.trim();
+
+    const description =
+        document.getElementById("newsDescription")
+        .value.trim();
+
+    const date =
+        document.getElementById("newsDate")
+        .value;
+
+
+    if(!title || !description){
+
+        showToast("Title এবং Description দিন।");
+        return;
+
+    }
+
+
+    const data = {
+
+        title,
+        description,
+        date,
+        updatedAt:
+            firebase.database.ServerValue.TIMESTAMP
+
+    };
+
+
+    try{
+
+        if(id){
+
+            await db
+                .ref("news/" + id)
+                .update(data);
+
+            showToast("News updated হয়েছে।");
+
+        }else{
+
+            data.createdAt =
+                firebase.database.ServerValue.TIMESTAMP;
+
+            await db.ref("news").push(data);
+
+            showToast("নতুন News তৈরি হয়েছে।");
+
+        }
+
+        resetNewsForm();
+
+    }catch(error){
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* ================= RENDER NEWS ================= */
+
+function renderNews(data){
+
+    const container =
+        document.getElementById("newsList");
+
+    const entries =
+        Object.entries(data)
+        .sort((a,b)=>
+            (b[1].createdAt || 0) -
+            (a[1].createdAt || 0)
+        );
+
+
+    if(entries.length === 0){
+
+        container.innerHTML =
+            "<p>কোনো News নেই।</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        entries.map(([id,item])=>{
+
+            return `
+
+            <div class="item">
+
+                <h4>
+                    ${escapeHTML(item.title)}
+                </h4>
+
+                <div class="item-meta">
+                    ${escapeHTML(item.date || "")}
+                </div>
+
+                <p>
+                    ${escapeHTML(item.description || "")}
+                </p>
+
+                <div class="item-actions">
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="editNews('${id}')">
+
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+
+                    </button>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteNews('${id}')">
+
+                        <i class="fa-solid fa-trash"></i>
+                        Delete
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* ================= EDIT NEWS ================= */
+
+async function editNews(id){
+
+    const snapshot =
+        await db.ref("news/" + id).once("value");
+
+    const data = snapshot.val();
+
+    if(!data){
+        return;
+    }
+
+    document.getElementById("newsId").value = id;
+
+    document.getElementById("newsTitle").value =
+        data.title || "";
+
+    document.getElementById("newsDescription").value =
+        data.description || "";
+
+    document.getElementById("newsDate").value =
+        data.date || "";
+
+    document.getElementById("newsFormTitle")
+        .textContent = "Edit News";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* ================= DELETE NEWS ================= */
+
+async function deleteNews(id){
+
+    if(!confirm("এই News Delete করতে চান?")){
+        return;
+    }
+
+    try{
+
+        await db.ref("news/" + id).remove();
+
+        showToast("News Delete হয়েছে।");
+
+    }catch(error){
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* ================= RESET NEWS ================= */
+
+function resetNewsForm(){
+
+    document.getElementById("newsId").value = "";
+
+    document.getElementById("newsTitle").value = "";
+
+    document.getElementById("newsDescription").value = "";
+
+    document.getElementById("newsDate").value = "";
+
+    document.getElementById("newsFormTitle")
+        .textContent = "Add News";
+
+}
+
+
+/* ================= ZOOM ================= */
+
+async function saveZoom(){
+
+    const title =
+        document.getElementById("zoomTitle")
+        .value.trim();
+
+    const description =
+        document.getElementById("zoomDescription")
+        .value.trim();
+
+    const link =
+        safeURL(
+            document.getElementById("zoomLink")
+            .value.trim()
+        );
+
+
+    if(link && !link.startsWith("https://")){
+
+        showToast("Zoom link অবশ্যই https:// দিয়ে দিন।");
+        return;
+
+    }
+
+
+    try{
+
+        await db.ref("settings/zoom").set({
+
+            title,
+            description,
+            link,
+
+            updatedAt:
+                firebase.database.ServerValue.TIMESTAMP
+
+        });
+
+        showToast("Zoom settings Save হয়েছে।");
+
+    }catch(error){
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* ================= SUPPORT ================= */
+
+function renderSupport(data){
+
+    const container =
+        document.getElementById("supportList");
+
+    const entries =
+        Object.entries(data)
+        .sort((a,b)=>
+            (b[1].createdAt || 0) -
+            (a[1].createdAt || 0)
+        );
+
+
+    if(entries.length === 0){
+
+        container.innerHTML =
+            "<p>কোনো support message নেই।</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        entries.map(([id,item])=>{
+
+            return `
+
+            <div class="item">
+
+                <h4>
+                    ${escapeHTML(item.name || "Unknown")}
+                </h4>
+
+                <div class="item-meta">
+
+                    WhatsApp:
+                    ${escapeHTML(item.whatsapp || "-")}
+
+                    <br>
+
+                    ${formatDate(item.createdAt)}
+
+                </div>
+
+                <p>
+                    ${escapeHTML(item.message || "")}
+                </p>
+
+                <div class="form-actions">
+
+                    <select
+                        onchange="updateTicketStatus(
+                            '${id}',
+                            this.value
+                        )">
+
+                        <option value="open"
+                            ${item.status==="open"?"selected":""}>
+                            Open
+                        </option>
+
+                        <option value="in-progress"
+                            ${item.status==="in-progress"?"selected":""}>
+                            In Progress
+                        </option>
+
+                        <option value="closed"
+                            ${item.status==="closed"?"selected":""}>
+                            Closed
+                        </option>
+
+                    </select>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteTicket('${id}')">
+
+                        Delete
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* ================= UPDATE SUPPORT STATUS ================= */
+
+async function updateTicketStatus(id,status){
+
+    try{
+
+        await db
+            .ref("support-tickets/" + id)
+            .update({
+                status:status,
+                updatedAt:
+                    firebase.database.ServerValue.TIMESTAMP
+            });
+
+        showToast("Status updated হয়েছে।");
+
+    }catch(error){
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* ================= DELETE SUPPORT ================= */
+
+async function deleteTicket(id){
+
+    if(!confirm("এই support message Delete করতে চান?")){
+        return;
+    }
+
+    try{
+
+        await db
+            .ref("support-tickets/" + id)
+            .remove();
+
+        showToast("Message Delete হয়েছে।");
+
+    }catch(error){
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* ================= USERS ================= */
+
+function renderUsers(data){
+
+    const tbody =
+        document.getElementById("usersList");
+
+    const entries =
+        Object.entries(data)
+        .sort((a,b)=>
+            (b[1].createdAt || 0) -
+            (a[1].createdAt || 0)
+        );
+
+
+    if(entries.length === 0){
+
+        tbody.innerHTML =
+            `
+            <tr>
+                <td colspan="4">
+                    কোনো user নেই।
+                </td>
+            </tr>
+            `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        entries.map(([uid,item])=>{
+
+            return `
+
+            <tr>
+
+                <td>
+                    ${escapeHTML(item.name || "-")}
+                </td>
+
+                <td>
+                    ${escapeHTML(item.email || "-")}
+                </td>
+
+                <td>
+                    ${escapeHTML(item.whatsapp || "-")}
+                </td>
+
+                <td>
+                    ${formatDate(item.createdAt)}
+                </td>
+
+            </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+</script>
+
+</body>
+</html>

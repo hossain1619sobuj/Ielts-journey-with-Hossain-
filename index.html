@@ -1,0 +1,3570 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="IELTS Journey with Hossain — IELTS শেখার জন্য সহজ ও সুন্দর একটি প্ল্যাটফর্ম।">
+    <meta name="theme-color" content="#0b1220">
+
+    <title>IELTS Journey with Hossain</title>
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    >
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <style>
+        :root {
+            --bg: #08111f;
+            --bg-soft: #0d1728;
+            --card: #111e31;
+            --card-2: #16243a;
+            --gold: #f5c451;
+            --gold-dark: #dca92e;
+            --text: #f5f7fb;
+            --muted: #aeb8c8;
+            --border: rgba(255,255,255,.09);
+            --danger: #ff5f6d;
+            --success: #45d483;
+            --blue: #4ea1ff;
+            --shadow: 0 15px 45px rgba(0,0,0,.28);
+            --radius: 18px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, "Noto Sans Bengali", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .container {
+            width: min(1120px, 92%);
+            margin: auto;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================== */
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(8,17,31,.94);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            display: inline-flex;
+            padding: 9px 13px;
+            color: var(--muted);
+            border-radius: 10px;
+            transition: .2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+            background: rgba(245,196,81,.07);
+        }
+
+        .nav-auth {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: #111;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            color: var(--text);
+            border: 0;
+            font-size: 22px;
+        }
+
+        /* =========================
+           HERO
+        ========================== */
+
+        .hero {
+            min-height: 620px;
+            display: flex;
+            align-items: center;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(245,196,81,.11), transparent 30%),
+                radial-gradient(circle at 85% 80%, rgba(78,161,255,.09), transparent 30%);
+        }
+
+        .hero-content {
+            max-width: 760px;
+            padding: 80px 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 13px;
+            border: 1px solid rgba(245,196,81,.25);
+            border-radius: 999px;
+            color: var(--gold);
+            background: rgba(245,196,81,.06);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 7vw, 72px);
+            line-height: 1.08;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: var(--gold);
+        }
+
+        .hero p {
+            color: var(--muted);
+            max-width: 680px;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* =========================
+           SECTIONS
+        ========================== */
+
+        section {
+            padding: 85px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-title h2 {
+            font-size: clamp(28px, 5vw, 42px);
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: var(--muted);
+        }
+
+        /* =========================
+           ABOUT
+        ========================== */
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 45px;
+            align-items: center;
+        }
+
+        .profile-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .profile-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 14px;
+            background: var(--bg-soft);
+        }
+
+        .about-content h3 {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .about-bio {
+            color: var(--muted);
+            margin-bottom: 25px;
+            overflow-wrap: anywhere;
+        }
+
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .social-links a {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--muted);
+            transition: .2s;
+        }
+
+        .social-links a:hover {
+            color: var(--gold);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* =========================
+           LESSONS
+        ========================== */
+
+        .lesson-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .categories {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 9px 15px;
+            background: var(--card);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .category-btn.active,
+        .category-btn:hover {
+            background: var(--gold);
+            color: #111;
+            border-color: var(--gold);
+        }
+
+        .search-box {
+            position: relative;
+            min-width: 250px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 11px 13px 11px 40px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--gold);
+        }
+
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .lesson-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: .25s;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(245,196,81,.3);
+            box-shadow: var(--shadow);
+        }
+
+        .lesson-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            background: var(--bg-soft);
+        }
+
+        .lesson-body {
+            padding: 18px;
+        }
+
+        .lesson-category {
+            display: inline-block;
+            color: var(--gold);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+        }
+
+        .lesson-body h3 {
+            font-size: 19px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-body p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .lesson-btn {
+            width: 100%;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 45px 20px;
+            color: var(--muted);
+            background: var(--card);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+
+        /* =========================
+           PAGINATION
+        ========================== */
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            min-width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .page-btn.active,
+        .page-btn:hover {
+            background: var(--gold);
+            color: #111;
+            border-color: var(--gold);
+        }
+
+        /* =========================
+           ZOOM
+        ========================== */
+
+        .zoom-box {
+            background:
+                linear-gradient(135deg, rgba(245,196,81,.09), rgba(78,161,255,.06)),
+                var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+        }
+
+        .zoom-box h3 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .zoom-box p {
+            color: var(--muted);
+        }
+
+        .countdown {
+            margin-top: 12px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* =========================
+           NEWS
+        ========================== */
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .news-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+        }
+
+        .news-date {
+            color: var(--gold);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .news-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .news-card p {
+            color: var(--muted);
+        }
+
+        /* =========================
+           SUPPORT
+        ========================== */
+
+        .support-wrapper {
+            max-width: 760px;
+            margin: auto;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-soft);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--gold);
+        }
+
+        textarea.form-control {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        /* =========================
+           ADS
+        ========================== */
+
+        .ad-placeholder {
+            min-height: 120px;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            display: grid;
+            place-items: center;
+            color: #68758a;
+            margin: 30px 0;
+        }
+
+        /* =========================
+           VISITOR
+        ========================== */
+
+        .visitor {
+            text-align: center;
+            padding: 25px;
+            background: var(--bg-soft);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .visitor strong {
+            color: var(--gold);
+            font-size: 22px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        footer {
+            padding: 45px 0 25px;
+            background: #060d18;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand {
+            max-width: 420px;
+        }
+
+        .footer-brand h3 {
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .footer-brand p,
+        .footer-links a {
+            color: var(--muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        .copyright {
+            text-align: center;
+            color: #647085;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        /* =========================
+           MODAL
+        ========================== */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0,0,0,.78);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: min(900px, 100%);
+            max-height: 92vh;
+            overflow-y: auto;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+        }
+
+        .close-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--bg-soft);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .close-btn:hover {
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 5px;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 9px 15px;
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            border-radius: 8px;
+        }
+
+        .tab-btn.active,
+        .tab-btn:hover {
+            background: var(--gold);
+            color: #111;
+        }
+
+        .modal-body {
+            padding: 18px;
+        }
+
+        .media-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .media-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .pdf-frame {
+            min-height: 650px;
+            width: 100%;
+            border: 0;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .modal-footer {
+            padding: 15px 18px 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* =========================
+           AUTH MODAL
+        ========================== */
+
+        .auth-modal .modal-content {
+            width: min(450px, 100%);
+        }
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            padding: 15px 18px 0;
+        }
+
+        .auth-tab {
+            padding: 10px;
+            background: var(--bg-soft);
+            border: 0;
+            color: var(--muted);
+            border-radius: 8px;
+        }
+
+        .auth-tab.active {
+            background: var(--gold);
+            color: #111;
+        }
+
+        .auth-form {
+            padding: 20px;
+        }
+
+        .auth-form.hidden {
+            display: none;
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            margin-top: 8px;
+            color: var(--gold);
+            font-size: 13px;
+        }
+
+        .auth-message {
+            display: none;
+            margin-bottom: 15px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .auth-message.show {
+            display: block;
+        }
+
+        .auth-message.error {
+            background: rgba(255,95,109,.1);
+            color: #ff8c96;
+            border: 1px solid rgba(255,95,109,.2);
+        }
+
+        .auth-message.success {
+            background: rgba(69,212,131,.1);
+            color: #72e4a1;
+            border: 1px solid rgba(69,212,131,.2);
+        }
+
+        .user-menu {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-name {
+            color: var(--muted);
+            font-size: 14px;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* =========================
+           TOAST
+        ========================== */
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 5000;
+            max-width: 360px;
+            padding: 13px 17px;
+            background: var(--card-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: toastIn .25s ease;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 900px) {
+            .lessons-grid,
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .about-grid {
+                grid-template-columns: 240px 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 72px;
+                left: 0;
+                right: 0;
+                padding: 15px;
+                background: var(--bg);
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .nav-links a {
+                justify-content: center;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-inner {
+                gap: 10px;
+            }
+
+            .logo {
+                font-size: 17px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .about-grid,
+            .lessons-grid,
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-grid {
+                text-align: center;
+            }
+
+            .profile-card {
+                max-width: 260px;
+                margin: auto;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .lesson-tools {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .zoom-box {
+                flex-direction: column;
+                text-align: center;
+                padding: 25px;
+            }
+
+            section {
+                padding: 65px 0;
+            }
+
+            .hero {
+                min-height: 540px;
+            }
+
+            .hero-content {
+                padding: 65px 0;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .nav-auth .btn {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .support-wrapper {
+                padding: 20px;
+            }
+
+            .modal {
+                padding: 8px;
+            }
+
+            .modal-content {
+                max-height: 95vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     NAVBAR
+========================== -->
+<header class="navbar">
+    <div class="container nav-inner">
+
+        <a href="#home" class="logo">
+            IELTS Journey
+        </a>
+
+        <button
+            type="button"
+            class="mobile-menu-btn"
+            id="mobileMenuBtn"
+            aria-label="Open menu"
+            aria-expanded="false"
+        >
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#lessons">Lessons</a></li>
+            <li><a href="#news">News</a></li>
+            <li><a href="#support">Support</a></li>
+        </ul>
+
+        <div class="nav-auth">
+
+            <div class="user-menu" id="userMenu">
+                <span class="user-name" id="userName"></span>
+
+                <button
+                    type="button"
+                    class="btn btn-outline"
+                    id="logoutBtn"
+                >
+                    Logout
+                </button>
+            </div>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="loginBtn"
+            >
+                Login
+            </button>
+
+        </div>
+    </div>
+</header>
+
+
+<!-- =========================
+     HERO
+========================== -->
+<section class="hero" id="home">
+    <div class="container">
+        <div class="hero-content">
+
+            <div class="badge">
+                <i class="fa-solid fa-graduation-cap"></i>
+                IELTS Learning Platform
+            </div>
+
+            <h1>
+                Your Journey to<br>
+                <span>IELTS Success</span>
+            </h1>
+
+            <p>
+                IELTS শেখার জন্য সহজ, সুন্দর ও সংগঠিত একটি প্ল্যাটফর্ম।
+                নিয়মিত Lesson, Practice, News এবং Support নিয়ে এগিয়ে চলুন আপনার কাঙ্ক্ষিত স্কোরের দিকে।
+            </p>
+
+            <div class="hero-actions">
+                <a href="#lessons" class="btn btn-primary">
+                    Start Learning
+                </a>
+
+                <a href="#about" class="btn btn-outline">
+                    About Me
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================
+     ABOUT
+========================== -->
+<section id="about">
+    <div class="container">
+
+        <div class="section-title">
+            <h2>About Me</h2>
+            <p>Learn more about your IELTS journey guide.</p>
+        </div>
+
+        <div class="about-grid">
+
+            <div class="profile-card">
+                <img
+                    id="profileImage"
+                    class="profile-image"
+                    src="https://placehold.co/600x600/111e31/f5c451?text=Hossain"
+                    alt="Hossain"
+                    loading="lazy"
+                >
+            </div>
+
+            <div class="about-content">
+
+                <h3 id="aboutName">
+                    Hossain
+                </h3>
+
+                <div
+                    id="aboutBio"
+                    class="about-bio"
+                >
+                    IELTS শেখার পথে আপনাকে সাহায্য করার জন্য এই প্ল্যাটফর্মটি তৈরি করা হয়েছে।
+                </div>
+
+                <div
+                    id="socialLinks"
+                    class="social-links"
+                ></div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================
+     LESSONS
+========================== -->
+<section id="lessons">
+    <div class="container">
+
+        <div class="section-title">
+            <h2>Lessons</h2>
+            <p>Improve your IELTS skills step by step.</p>
+        </div>
+
+        <div class="lesson-tools">
+
+            <div
+                class="categories"
+                id="categories"
+            >
+                <button
+                    type="button"
+                    class="category-btn active"
+                    data-category="all"
+                >
+                    All
+                </button>
+
+                <button
+                    type="button"
+                    class="category-btn"
+                    data-category="listening"
+                >
+                    Listening
+                </button>
+
+                <button
+                    type="button"
+                    class="category-btn"
+                    data-category="reading"
+                >
+                    Reading
+                </button>
+
+                <button
+                    type="button"
+                    class="category-btn"
+                    data-category="writing"
+                >
+                    Writing
+                </button>
+
+                <button
+                    type="button"
+                    class="category-btn"
+                    data-category="speaking"
+                >
+                    Speaking
+                </button>
+
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-search"></i>
+
+                <input
+                    type="search"
+                    id="lessonSearch"
+                    placeholder="Search lessons..."
+                    autocomplete="off"
+                >
+            </div>
+
+        </div>
+
+        <div
+            class="lessons-grid"
+            id="lessonsGrid"
+        ></div>
+
+        <div
+            class="pagination"
+            id="pagination"
+        ></div>
+
+    </div>
+</section>
+
+
+<!-- =========================
+     ZOOM CLASS
+========================== -->
+<section id="zoom">
+    <div class="container">
+
+        <div class="section-title">
+            <h2>Live Zoom Class</h2>
+            <p>Join the live learning session.</p>
+        </div>
+
+        <div class="zoom-box">
+
+            <div>
+                <h3 id="zoomTitle">
+                    Weekly IELTS Class
+                </h3>
+
+                <p id="zoomDescription">
+                    প্রতি শুক্রবার আমাদের Live IELTS Class অনুষ্ঠিত হবে।
+                </p>
+
+                <div
+                    class="countdown"
+                    id="countdown"
+                >
+                    Loading...
+                </div>
+            </div>
+
+            <div>
+                <a
+                    href="#"
+                    class="btn btn-primary"
+                    id="zoomJoinBtn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="display:none;"
+                >
+                    <i class="fa-solid fa-video"></i>
+                    Join Zoom
+                </a>
+
+                <span
+                    id="zoomUnavailable"
+                    style="color:var(--muted);"
+                >
+                    Zoom link will be added soon.
+                </span>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================
+     NEWS
+========================== -->
+<section id="news">
+    <div class="container">
+
+        <div class="section-title">
+            <h2>Latest News</h2>
+            <p>Important updates and announcements.</p>
+        </div>
+
+        <div
+            class="news-grid"
+            id="newsGrid"
+        ></div>
+
+    </div>
+</section>
+
+
+<!-- =========================
+     AD
+========================== -->
+<div class="container">
+    <div class="ad-placeholder">
+        Advertisement
+    </div>
+</div>
+
+
+<!-- =========================
+     SUPPORT
+========================== -->
+<section id="support">
+    <div class="container">
+
+        <div class="section-title">
+            <h2>Need Help?</h2>
+            <p>Send us your question or problem.</p>
+        </div>
+
+        <div class="support-wrapper">
+
+            <form id="supportForm">
+
+                <div class="form-group">
+                    <label for="supportName">
+                        Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="supportName"
+                        class="form-control"
+                        placeholder="Your name"
+                        required
+                        maxlength="100"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="supportWhatsapp">
+                        WhatsApp Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="supportWhatsapp"
+                        class="form-control"
+                        placeholder="Your WhatsApp number"
+                        maxlength="30"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="supportMessage">
+                        Message
+                    </label>
+
+                    <textarea
+                        id="supportMessage"
+                        class="form-control"
+                        placeholder="Write your message..."
+                        required
+                        maxlength="2000"
+                    ></textarea>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="supportSubmit"
+                >
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Send Message
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================
+     VISITOR
+========================== -->
+<div class="visitor">
+    <div class="container">
+        <i class="fa-solid fa-eye"></i>
+        Total Visits:
+        <strong id="visitorCount">0</strong>
+    </div>
+</div>
+
+
+<!-- =========================
+     FOOTER
+========================== -->
+<footer>
+    <div class="container">
+
+        <div class="footer-inner">
+
+            <div class="footer-brand">
+                <h3>IELTS Journey with Hossain</h3>
+
+                <p>
+                    Learn IELTS smarter, practice regularly,
+                    and move closer to your target score.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#lessons">Lessons</a>
+                <a href="#news">News</a>
+                <a href="#support">Support</a>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            © <span id="currentYear"></span>
+            IELTS Journey with Hossain. All rights reserved.
+        </div>
+
+    </div>
+</footer>
+
+
+<!-- =========================
+     LESSON MODAL
+========================== -->
+<div
+    class="modal"
+    id="lessonModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="lessonModalTitle"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h3 id="lessonModalTitle">
+                Lesson
+            </h3>
+
+            <button
+                type="button"
+                class="close-btn"
+                id="closeLessonModal"
+                aria-label="Close"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div class="modal-tabs">
+
+            <button
+                type="button"
+                class="tab-btn active"
+                id="videoTab"
+            >
+                <i class="fa-solid fa-play"></i>
+                Video
+            </button>
+
+            <button
+                type="button"
+                class="tab-btn"
+                id="pdfTab"
+            >
+                <i class="fa-solid fa-file-pdf"></i>
+                PDF
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div
+                id="videoPanel"
+                class="media-container"
+            ></div>
+
+            <div
+                id="pdfPanel"
+                style="display:none;"
+            ></div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <a
+                href="#"
+                id="youtubeExternal"
+                class="btn btn-outline"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="display:none;"
+            >
+                <i class="fa-brands fa-youtube"></i>
+                Open Video
+            </a>
+
+            <a
+                href="#"
+                id="pdfExternal"
+                class="btn btn-primary"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="display:none;"
+            >
+                <i class="fa-solid fa-file-arrow-down"></i>
+                Open PDF
+            </a>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =========================
+     AUTH MODAL
+========================== -->
+<div
+    class="modal auth-modal"
+    id="authModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="authModalTitle"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h3 id="authModalTitle">
+                Account
+            </h3>
+
+            <button
+                type="button"
+                class="close-btn"
+                id="closeAuthModal"
+                aria-label="Close"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div class="auth-tabs">
+
+            <button
+                type="button"
+                class="auth-tab active"
+                data-auth-tab="login"
+            >
+                Login
+            </button>
+
+            <button
+                type="button"
+                class="auth-tab"
+                data-auth-tab="register"
+            >
+                Register
+            </button>
+
+        </div>
+
+        <div
+            id="authMessage"
+            class="auth-message"
+        ></div>
+
+
+        <!-- LOGIN -->
+
+        <form
+            id="loginForm"
+            class="auth-form"
+        >
+
+            <div class="form-group">
+                <label for="loginEmail">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    class="form-control"
+                    placeholder="Your email"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    class="form-control"
+                    placeholder="Your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <a
+                    href="#"
+                    class="forgot-link"
+                    id="forgotPassword"
+                >
+                    Forgot password?
+                </a>
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                style="width:100%;"
+                id="loginSubmit"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <!-- REGISTER -->
+
+        <form
+            id="registerForm"
+            class="auth-form hidden"
+        >
+
+            <div class="form-group">
+                <label for="registerName">
+                    Name
+                </label>
+
+                <input
+                    type="text"
+                    id="registerName"
+                    class="form-control"
+                    placeholder="Your name"
+                    autocomplete="name"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="registerEmail">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    class="form-control"
+                    placeholder="Your email"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="registerWhatsapp">
+                    WhatsApp Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="registerWhatsapp"
+                    class="form-control"
+                    placeholder="Your WhatsApp number"
+                    maxlength="30"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="registerPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    class="form-control"
+                    placeholder="At least 6 characters"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                style="width:100%;"
+                id="registerSubmit"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- TOAST -->
+<div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+></div>
+
+
+<script>
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAwzAvZrNs9ulHlSROQRnPz5tY_I3N-OT8",
+    authDomain: "ielts-journey-with-hossain.firebaseapp.com",
+    databaseURL: "https://ielts-journey-with-hossain-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "ielts-journey-with-hossain",
+    storageBucket: "ielts-journey-with-hossain.firebasestorage.app",
+    messagingSenderId: "327654129642",
+    appId: "1:327654129642:web:b9e04fe47c7b54b20abc93",
+    measurementId: "G-H3MKTLJR4K"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.database();
+const auth = firebase.auth();
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let lessons = {};
+let news = {};
+let aboutData = {};
+let zoomData = {};
+
+let selectedCategory = "all";
+let searchTerm = "";
+let currentPage = 1;
+
+const LESSONS_PER_PAGE = 6;
+
+let currentLessonKey = null;
+let previousBodyOverflow = "";
+
+let currentUser = null;
+
+
+/* =========================================================
+   DEMO DATA
+========================================================= */
+
+const demoAbout = {
+    name: "Hossain",
+    bio: "IELTS শেখার পথে আপনাকে সাহায্য করার জন্য এই প্ল্যাটফর্মটি তৈরি করা হয়েছে। নিয়মিত Lesson, Practice এবং গুরুত্বপূর্ণ IELTS আপডেট এখানে পাওয়া যাবে।",
+    profileImage: "https://placehold.co/600x600/111e31/f5c451?text=Hossain",
+    facebook: "",
+    youtube: "",
+    instagram: "",
+    whatsapp: ""
+};
+
+const demoLessons = {
+    demo1: {
+        title: "IELTS Listening Introduction",
+        category: "listening",
+        description: "IELTS Listening সম্পর্কে প্রাথমিক ধারণা এবং প্রস্তুতির গুরুত্বপূর্ণ বিষয়গুলো।",
+        video: "",
+        pdf: "",
+        thumb: "https://placehold.co/800x450/111e31/f5c451?text=Listening"
+    },
+
+    demo2: {
+        title: "IELTS Reading Basics",
+        category: "reading",
+        description: "Reading section কীভাবে শুরু করবেন এবং কোন বিষয়গুলো আগে শিখবেন।",
+        video: "",
+        pdf: "",
+        thumb: "https://placehold.co/800x450/111e31/f5c451?text=Reading"
+    },
+
+    demo3: {
+        title: "IELTS Writing Introduction",
+        category: "writing",
+        description: "Writing Task 1 এবং Task 2 সম্পর্কে প্রাথমিক ধারণা।",
+        video: "",
+        pdf: "",
+        thumb: "https://placehold.co/800x450/111e31/f5c451?text=Writing"
+    }
+};
+
+const demoNews = {
+    demo1: {
+        title: "IELTS Journey is now live",
+        description: "আমাদের IELTS learning platform এখন সবার জন্য উন্মুক্ত।",
+        date: "2026-09-03"
+    }
+};
+
+
+/* =========================================================
+   SECURITY / HELPER FUNCTIONS
+========================================================= */
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function safeExternalUrl(value) {
+    if (!value) return "";
+
+    try {
+        const url = new URL(String(value).trim());
+
+        if (
+            url.protocol !== "https:" &&
+            url.protocol !== "http:"
+        ) {
+            return "";
+        }
+
+        return url.href;
+    } catch {
+        return "";
+    }
+}
+
+
+function sanitizeBioHTML(html) {
+    const template = document.createElement("template");
+
+    template.innerHTML = String(html || "");
+
+    const dangerousTags = [
+        "script",
+        "iframe",
+        "object",
+        "embed",
+        "form",
+        "style",
+        "link",
+        "meta"
+    ];
+
+    template.content
+        .querySelectorAll(dangerousTags.join(","))
+        .forEach(el => el.remove());
+
+    template.content
+        .querySelectorAll("*")
+        .forEach(el => {
+
+            [...el.attributes].forEach(attr => {
+
+                const name = attr.name.toLowerCase();
+                const value = attr.value;
+
+                if (name.startsWith("on")) {
+                    el.removeAttribute(attr.name);
+                }
+
+                if (
+                    ["href", "src"].includes(name) &&
+                    /^\s*javascript:/i.test(value)
+                ) {
+                    el.removeAttribute(attr.name);
+                }
+
+                if (name === "style") {
+                    el.removeAttribute(attr.name);
+                }
+            });
+        });
+
+    return template.innerHTML;
+}
+
+
+function getYouTubeId(url) {
+    if (!url) return "";
+
+    const value = String(url).trim();
+
+    try {
+        const parsed = new URL(value);
+
+        if (
+            parsed.hostname === "youtu.be"
+        ) {
+            return parsed.pathname.replace("/", "").split("?")[0];
+        }
+
+        if (
+            parsed.hostname.includes("youtube.com")
+        ) {
+            if (parsed.pathname === "/watch") {
+                return parsed.searchParams.get("v") || "";
+            }
+
+            if (parsed.pathname.startsWith("/embed/")) {
+                return parsed.pathname.split("/embed/")[1].split("/")[0];
+            }
+
+            if (parsed.pathname.startsWith("/shorts/")) {
+                return parsed.pathname.split("/shorts/")[1].split("/")[0];
+            }
+        }
+    } catch {
+        return "";
+    }
+
+    return "";
+}
+
+
+function getYouTubeEmbedUrl(url) {
+    const id = getYouTubeId(url);
+
+    if (!id) return "";
+
+    return "https://www.youtube.com/embed/" +
+        encodeURIComponent(id) +
+        "?rel=0";
+}
+
+
+function formatDate(dateValue) {
+    if (!dateValue) return "";
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+        return escapeHTML(dateValue);
+    }
+
+    return date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+}
+
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3500);
+}
+
+
+function setButtonLoading(button, loading, loadingText, normalText) {
+    if (!button) return;
+
+    button.disabled = loading;
+    button.textContent = loading
+        ? loadingText
+        : normalText;
+}
+
+
+function toBanglaDigits(number) {
+    return String(number).replace(/\d/g, digit => {
+        return "০১২৩৪৫৬৭৮৯"[digit];
+    });
+}
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+const navLinks = document.getElementById("navLinks");
+
+mobileMenuBtn.addEventListener("click", () => {
+
+    const opened = navLinks.classList.toggle("show");
+
+    mobileMenuBtn.setAttribute(
+        "aria-expanded",
+        opened ? "true" : "false"
+    );
+
+    mobileMenuBtn.innerHTML = opened
+        ? '<i class="fa-solid fa-xmark"></i>'
+        : '<i class="fa-solid fa-bars"></i>';
+});
+
+
+navLinks.addEventListener("click", event => {
+
+    if (event.target.closest("a")) {
+        navLinks.classList.remove("show");
+
+        mobileMenuBtn.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        mobileMenuBtn.innerHTML =
+            '<i class="fa-solid fa-bars"></i>';
+    }
+});
+
+
+/* =========================================================
+   ABOUT
+========================================================= */
+
+function renderAbout(data) {
+
+    const about = {
+        ...demoAbout,
+        ...(data || {})
+    };
+
+    document.getElementById("aboutName").textContent =
+        about.name || "Hossain";
+
+    const profileImage =
+        safeExternalUrl(about.profileImage);
+
+    document.getElementById("profileImage").src =
+        profileImage ||
+        demoAbout.profileImage;
+
+    document.getElementById("profileImage").alt =
+        about.name || "Hossain";
+
+    document.getElementById("aboutBio").innerHTML =
+        sanitizeBioHTML(
+            about.bio ||
+            demoAbout.bio
+        );
+
+    renderSocialLinks(about);
+}
+
+
+function renderSocialLinks(about) {
+
+    const container =
+        document.getElementById("socialLinks");
+
+    container.innerHTML = "";
+
+    const socialData = [
+        {
+            url: about.facebook,
+            icon: "fa-brands fa-facebook-f",
+            label: "Facebook"
+        },
+        {
+            url: about.youtube,
+            icon: "fa-brands fa-youtube",
+            label: "YouTube"
+        },
+        {
+            url: about.instagram,
+            icon: "fa-brands fa-instagram",
+            label: "Instagram"
+        },
+        {
+            url: about.whatsapp,
+            icon: "fa-brands fa-whatsapp",
+            label: "WhatsApp"
+        }
+    ];
+
+    socialData.forEach(item => {
+
+        const url = safeExternalUrl(item.url);
+
+        if (!url) return;
+
+        const a = document.createElement("a");
+
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.setAttribute("aria-label", item.label);
+
+        const icon = document.createElement("i");
+
+        icon.className = item.icon;
+
+        a.appendChild(icon);
+        container.appendChild(a);
+    });
+}
+
+
+/* =========================================================
+   LESSONS
+========================================================= */
+
+function getLessonArray() {
+
+    return Object.entries(lessons || {})
+        .map(([key, value]) => ({
+            key,
+            ...(value || {})
+        }))
+        .filter(lesson => lesson.title);
+}
+
+
+function getFilteredLessons() {
+
+    return getLessonArray().filter(lesson => {
+
+        const category =
+            String(lesson.category || "other")
+                .toLowerCase();
+
+        const title =
+            String(lesson.title || "").toLowerCase();
+
+        const description =
+            String(lesson.description || "").toLowerCase();
+
+        const matchesCategory =
+            selectedCategory === "all" ||
+            category === selectedCategory;
+
+        const matchesSearch =
+            !searchTerm ||
+            title.includes(searchTerm) ||
+            description.includes(searchTerm) ||
+            category.includes(searchTerm);
+
+        return matchesCategory && matchesSearch;
+    });
+}
+
+
+function renderLessons() {
+
+    const grid =
+        document.getElementById("lessonsGrid");
+
+    const filtered = getFilteredLessons();
+
+    const totalPages =
+        Math.max(
+            1,
+            Math.ceil(
+                filtered.length / LESSONS_PER_PAGE
+            )
+        );
+
+    if (currentPage > totalPages) {
+        currentPage = totalPages;
+    }
+
+    const start =
+        (currentPage - 1) *
+        LESSONS_PER_PAGE;
+
+    const pageItems =
+        filtered.slice(
+            start,
+            start + LESSONS_PER_PAGE
+        );
+
+    grid.innerHTML = "";
+
+    if (!pageItems.length) {
+
+        grid.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-book-open" style="font-size:32px;margin-bottom:12px;"></i>
+                <p>No lessons found.</p>
+            </div>
+        `;
+
+        renderPagination(0);
+
+        return;
+    }
+
+    pageItems.forEach(lesson => {
+
+        const card = document.createElement("article");
+
+        card.className = "lesson-card";
+
+        const imageUrl =
+            safeExternalUrl(lesson.thumb);
+
+        const category =
+            escapeHTML(
+                lesson.category || "Lesson"
+            );
+
+        const title =
+            escapeHTML(lesson.title);
+
+        const description =
+            escapeHTML(
+                lesson.description || ""
+            );
+
+        card.innerHTML = `
+            <img
+                class="lesson-thumb"
+                src="${imageUrl || "https://placehold.co/800x450/111e31/f5c451?text=IELTS+Lesson"}"
+                alt="${title}"
+                loading="lazy"
+            >
+
+            <div class="lesson-body">
+
+                <span class="lesson-category">
+                    ${category}
+                </span>
+
+                <h3>${title}</h3>
+
+                <p>${description}</p>
+
+                <button
+                    type="button"
+                    class="btn btn-primary lesson-btn"
+                    data-lesson-key="${escapeHTML(lesson.key)}"
+                >
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Open Lesson
+                </button>
+
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+
+    grid.querySelectorAll("[data-lesson-key]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                openLessonModal(
+                    button.getAttribute("data-lesson-key")
+                );
+
+            });
+        });
+
+    renderPagination(totalPages);
+}
+
+
+function renderPagination(totalPages) {
+
+    const container =
+        document.getElementById("pagination");
+
+    container.innerHTML = "";
+
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+        button.className =
+            "page-btn" +
+            (i === currentPage ? " active" : "");
+
+        button.textContent = i;
+
+        button.addEventListener("click", () => {
+
+            currentPage = i;
+
+            renderLessons();
+
+            document.getElementById("lessons")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+        });
+
+        container.appendChild(button);
+    }
+}
+
+
+/* =========================================================
+   CATEGORY FILTER
+========================================================= */
+
+document
+    .getElementById("categories")
+    .addEventListener("click", event => {
+
+        const button =
+            event.target.closest(".category-btn");
+
+        if (!button) return;
+
+        document
+            .querySelectorAll(".category-btn")
+            .forEach(btn =>
+                btn.classList.remove("active")
+            );
+
+        button.classList.add("active");
+
+        selectedCategory =
+            button.dataset.category || "all";
+
+        currentPage = 1;
+
+        renderLessons();
+    });
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document
+    .getElementById("lessonSearch")
+    .addEventListener("input", event => {
+
+        searchTerm =
+            event.target.value
+                .trim()
+                .toLowerCase();
+
+        currentPage = 1;
+
+        renderLessons();
+    });
+
+
+/* =========================================================
+   LESSON MODAL
+========================================================= */
+
+function openLessonModal(key) {
+
+    const lesson = lessons?.[key];
+
+    if (!lesson) {
+        showToast("Lesson not found.");
+        return;
+    }
+
+    currentLessonKey = key;
+
+    const modal =
+        document.getElementById("lessonModal");
+
+    document.getElementById("lessonModalTitle")
+        .textContent =
+        lesson.title || "Lesson";
+
+    const videoPanel =
+        document.getElementById("videoPanel");
+
+    const pdfPanel =
+        document.getElementById("pdfPanel");
+
+    const youtubeExternal =
+        document.getElementById("youtubeExternal");
+
+    const pdfExternal =
+        document.getElementById("pdfExternal");
+
+    videoPanel.innerHTML = "";
+    pdfPanel.innerHTML = "";
+
+    youtubeExternal.style.display = "none";
+    pdfExternal.style.display = "none";
+
+    const embedUrl =
+        getYouTubeEmbedUrl(lesson.video);
+
+    const youtubeUrl =
+        safeExternalUrl(lesson.video);
+
+    const pdfUrl =
+        safeExternalUrl(lesson.pdf);
+
+
+    /* VIDEO */
+
+    if (embedUrl) {
+
+        const iframe =
+            document.createElement("iframe");
+
+        iframe.src = embedUrl;
+
+        iframe.title =
+            lesson.title || "IELTS Lesson Video";
+
+        iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+        iframe.allowFullscreen = true;
+
+        iframe.loading = "lazy";
+
+        videoPanel.appendChild(iframe);
+
+        if (youtubeUrl) {
+            youtubeExternal.href = youtubeUrl;
+            youtubeExternal.style.display = "inline-flex";
+        }
+
+    } else {
+
+        videoPanel.innerHTML = `
+            <div style="
+                width:100%;
+                height:100%;
+                min-height:300px;
+                display:grid;
+                place-items:center;
+                color:#aeb8c8;
+                padding:20px;
+                text-align:center;
+            ">
+                <div>
+                    <i class="fa-solid fa-video-slash" style="font-size:35px;margin-bottom:12px;"></i>
+                    <p>এই Lesson-এর জন্য এখনো Video যোগ করা হয়নি।</p>
+                </div>
+            </div>
+        `;
+    }
+
+
+    /* PDF */
+
+    if (pdfUrl) {
+
+        const viewer =
+            document.createElement("iframe");
+
+        viewer.className = "pdf-frame";
+
+        viewer.loading = "lazy";
+
+        viewer.title =
+            (lesson.title || "Lesson") + " PDF";
+
+        viewer.src =
+            "https://docs.google.com/gview?embedded=1&url=" +
+            encodeURIComponent(pdfUrl);
+
+        pdfPanel.appendChild(viewer);
+
+        pdfExternal.href = pdfUrl;
+        pdfExternal.style.display = "inline-flex";
+
+    } else {
+
+        pdfPanel.innerHTML = `
+            <div style="
+                min-height:300px;
+                display:grid;
+                place-items:center;
+                color:#aeb8c8;
+                text-align:center;
+                padding:20px;
+            ">
+                <div>
+                    <i class="fa-solid fa-file-circle-xmark" style="font-size:35px;margin-bottom:12px;"></i>
+                    <p>এই Lesson-এর জন্য এখনো PDF যোগ করা হয়নি।</p>
+                </div>
+            </div>
+        `;
+    }
+
+
+    switchLessonTab("video");
+
+    previousBodyOverflow =
+        document.body.style.overflow;
+
+    document.body.classList.add("modal-open");
+
+    modal.classList.add("show");
+}
+
+
+function closeLessonModal() {
+
+    document
+        .getElementById("lessonModal")
+        .classList.remove("show");
+
+    document.body.classList.remove("modal-open");
+
+    document.body.style.overflow =
+        previousBodyOverflow;
+
+    document.getElementById("videoPanel").innerHTML = "";
+    document.getElementById("pdfPanel").innerHTML = "";
+
+    currentLessonKey = null;
+}
+
+
+function switchLessonTab(tab) {
+
+    const videoTab =
+        document.getElementById("videoTab");
+
+    const pdfTab =
+        document.getElementById("pdfTab");
+
+    const videoPanel =
+        document.getElementById("videoPanel");
+
+    const pdfPanel =
+        document.getElementById("pdfPanel");
+
+    if (tab === "video") {
+
+        videoTab.classList.add("active");
+        pdfTab.classList.remove("active");
+
+        videoPanel.style.display = "block";
+        pdfPanel.style.display = "none";
+
+    } else {
+
+        pdfTab.classList.add("active");
+        videoTab.classList.remove("active");
+
+        videoPanel.style.display = "none";
+        pdfPanel.style.display = "block";
+    }
+}
+
+
+document
+    .getElementById("closeLessonModal")
+    .addEventListener("click", closeLessonModal);
+
+document
+    .getElementById("videoTab")
+    .addEventListener("click", () =>
+        switchLessonTab("video")
+    );
+
+document
+    .getElementById("pdfTab")
+    .addEventListener("click", () =>
+        switchLessonTab("pdf")
+    );
+
+document
+    .getElementById("lessonModal")
+    .addEventListener("click", event => {
+
+        if (event.target.id === "lessonModal") {
+            closeLessonModal();
+        }
+    });
+
+
+/* =========================================================
+   NEWS
+========================================================= */
+
+function renderNews() {
+
+    const grid =
+        document.getElementById("newsGrid");
+
+    grid.innerHTML = "";
+
+    const items =
+        Object.entries(news || {})
+            .map(([key, value]) => ({
+                key,
+                ...(value || {})
+            }))
+            .filter(item => item.title)
+            .sort((a, b) => {
+
+                const dateA =
+                    new Date(a.date || 0).getTime();
+
+                const dateB =
+                    new Date(b.date || 0).getTime();
+
+                return dateB - dateA;
+            });
+
+    if (!items.length) {
+
+        grid.innerHTML = `
+            <div class="empty-state">
+                No news available right now.
+            </div>
+        `;
+
+        return;
+    }
+
+    items.forEach(item => {
+
+        const card =
+            document.createElement("article");
+
+        card.className = "news-card";
+
+        card.innerHTML = `
+            <div class="news-date">
+                <i class="fa-regular fa-calendar"></i>
+                ${escapeHTML(formatDate(item.date))}
+            </div>
+
+            <h3>
+                ${escapeHTML(item.title)}
+            </h3>
+
+            <p>
+                ${escapeHTML(item.description || "")}
+            </p>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+
+/* =========================================================
+   ZOOM
+========================================================= */
+
+function renderZoom(data) {
+
+    const zoom = data || {};
+
+    document.getElementById("zoomTitle")
+        .textContent =
+        zoom.title ||
+        "Weekly IELTS Class";
+
+    document.getElementById("zoomDescription")
+        .textContent =
+        zoom.description ||
+        "প্রতি শুক্রবার আমাদের Live IELTS Class অনুষ্ঠিত হবে।";
+
+    const joinBtn =
+        document.getElementById("zoomJoinBtn");
+
+    const unavailable =
+        document.getElementById("zoomUnavailable");
+
+    const zoomUrl =
+        safeExternalUrl(zoom.link);
+
+    if (zoomUrl) {
+
+        joinBtn.href = zoomUrl;
+        joinBtn.style.display = "inline-flex";
+        unavailable.style.display = "none";
+
+    } else {
+
+        joinBtn.style.display = "none";
+        unavailable.style.display = "inline";
+    }
+}
+
+
+/* =========================================================
+   COUNTDOWN
+   Every Friday 7:00 PM Bangladesh/local browser time
+========================================================= */
+
+function updateCountdown() {
+
+    const countdown =
+        document.getElementById("countdown");
+
+    const now = new Date();
+
+    const target =
+        new Date(now);
+
+    const day =
+        now.getDay();
+
+    const daysUntilFriday =
+        (5 - day + 7) % 7;
+
+    target.setDate(
+        now.getDate() + daysUntilFriday
+    );
+
+    target.setHours(19, 0, 0, 0);
+
+    if (target <= now) {
+        target.setDate(target.getDate() + 7);
+    }
+
+    const difference =
+        target.getTime() - now.getTime();
+
+    const totalSeconds =
+        Math.floor(difference / 1000);
+
+    const days =
+        Math.floor(
+            totalSeconds / 86400
+        );
+
+    const hours =
+        Math.floor(
+            (totalSeconds % 86400) / 3600
+        );
+
+    const minutes =
+        Math.floor(
+            (totalSeconds % 3600) / 60
+        );
+
+    const seconds =
+        totalSeconds % 60;
+
+    countdown.textContent =
+        `Next class: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+
+/* =========================================================
+   AUTH MODAL
+========================================================= */
+
+function openAuthModal(tab = "login") {
+
+    const modal =
+        document.getElementById("authModal");
+
+    modal.classList.add("show");
+
+    document.body.classList.add("modal-open");
+
+    switchAuthTab(tab);
+
+    document.getElementById("authMessage")
+        .classList.remove("show");
+}
+
+
+function closeAuthModal() {
+
+    document
+        .getElementById("authModal")
+        .classList.remove("show");
+
+    document.body.classList.remove("modal-open");
+}
+
+
+function switchAuthTab(tab) {
+
+    document
+        .querySelectorAll(".auth-tab")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.authTab === tab
+            );
+        });
+
+    document
+        .getElementById("loginForm")
+        .classList.toggle(
+            "hidden",
+            tab !== "login"
+        );
+
+    document
+        .getElementById("registerForm")
+        .classList.toggle(
+            "hidden",
+            tab !== "register"
+        );
+}
+
+
+function showAuthMessage(message, type = "error") {
+
+    const box =
+        document.getElementById("authMessage");
+
+    box.textContent = message;
+
+    box.className =
+        "auth-message show " + type;
+}
+
+
+function firebaseAuthError(error) {
+
+    const code = error?.code || "";
+
+    const messages = {
+        "auth/invalid-email":
+            "Email address সঠিক নয়।",
+
+        "auth/user-disabled":
+            "এই account disabled করা হয়েছে।",
+
+        "auth/user-not-found":
+            "এই email দিয়ে কোনো account পাওয়া যায়নি।",
+
+        "auth/wrong-password":
+            "Password ভুল হয়েছে।",
+
+        "auth/invalid-credential":
+            "Email অথবা password সঠিক নয়।",
+
+        "auth/invalid-login-credentials":
+            "Email অথবা password সঠিক নয়।",
+
+        "auth/email-already-in-use":
+            "এই email দিয়ে ইতিমধ্যে account আছে।",
+
+        "auth/weak-password":
+            "Password কমপক্ষে ৬ অক্ষরের হতে হবে।",
+
+        "auth/too-many-requests":
+            "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।"
+    };
+
+    return messages[code] ||
+        "কাজটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।";
+}
+
+
+/* LOGIN */
+
+document
+    .getElementById("loginForm")
+    .addEventListener("submit", async event => {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("loginEmail")
+                .value.trim();
+
+        const password =
+            document.getElementById("loginPassword")
+                .value;
+
+        const button =
+            document.getElementById("loginSubmit");
+
+        try {
+
+            setButtonLoading(
+                button,
+                true,
+                "Logging in...",
+                "Login"
+            );
+
+            await auth.signInWithEmailAndPassword(
+                email,
+                password
+            );
+
+            closeAuthModal();
+
+            showToast("Login successful.");
+
+            event.target.reset();
+
+        } catch (error) {
+
+            showAuthMessage(
+                firebaseAuthError(error),
+                "error"
+            );
+
+        } finally {
+
+            setButtonLoading(
+                button,
+                false,
+                "Logging in...",
+                "Login"
+            );
+        }
+    });
+
+
+/* REGISTER */
+
+document
+    .getElementById("registerForm")
+    .addEventListener("submit", async event => {
+
+        event.preventDefault();
+
+        const name =
+            document.getElementById("registerName")
+                .value.trim();
+
+        const email =
+            document.getElementById("registerEmail")
+                .value.trim();
+
+        const whatsapp =
+            document.getElementById("registerWhatsapp")
+                .value.trim();
+
+        const password =
+            document.getElementById("registerPassword")
+                .value;
+
+        const button =
+            document.getElementById("registerSubmit");
+
+        if (name.length < 2) {
+
+            showAuthMessage(
+                "আপনার নাম লিখুন।",
+                "error"
+            );
+
+            return;
+        }
+
+        try {
+
+            setButtonLoading(
+                button,
+                true,
+                "Creating...",
+                "Create Account"
+            );
+
+            const credential =
+                await auth.createUserWithEmailAndPassword(
+                    email,
+                    password
+                );
+
+            const user =
+                credential.user;
+
+            await user.updateProfile({
+                displayName: name
+            });
+
+            await db
+                .ref("users/" + user.uid)
+                .set({
+                    name: name,
+                    email: email,
+                    whatsapp: whatsapp,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                });
+
+            event.target.reset();
+
+            closeAuthModal();
+
+            showToast(
+                "Account successfully created."
+            );
+
+        } catch (error) {
+
+            showAuthMessage(
+                firebaseAuthError(error),
+                "error"
+            );
+
+        } finally {
+
+            setButtonLoading(
+                button,
+                false,
+                "Creating...",
+                "Create Account"
+            );
+        }
+    });
+
+
+/* FORGOT PASSWORD */
+
+document
+    .getElementById("forgotPassword")
+    .addEventListener("click", async event => {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("loginEmail")
+                .value.trim();
+
+        if (!email) {
+
+            showAuthMessage(
+                "প্রথমে আপনার email লিখুন।",
+                "error"
+            );
+
+            return;
+        }
+
+        try {
+
+            await auth.sendPasswordResetEmail(email);
+
+            showAuthMessage(
+                "Password reset email পাঠানো হয়েছে। আপনার inbox চেক করুন।",
+                "success"
+            );
+
+        } catch (error) {
+
+            showAuthMessage(
+                firebaseAuthError(error),
+                "error"
+            );
+        }
+    });
+
+
+/* AUTH TABS */
+
+document
+    .querySelectorAll(".auth-tab")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            switchAuthTab(
+                button.dataset.authTab
+            );
+
+            document
+                .getElementById("authMessage")
+                .classList.remove("show");
+        });
+    });
+
+
+/* AUTH OPEN/CLOSE */
+
+document
+    .getElementById("loginBtn")
+    .addEventListener("click", () =>
+        openAuthModal("login")
+    );
+
+document
+    .getElementById("closeAuthModal")
+    .addEventListener("click", closeAuthModal);
+
+document
+    .getElementById("authModal")
+    .addEventListener("click", event => {
+
+        if (event.target.id === "authModal") {
+            closeAuthModal();
+        }
+    });
+
+
+/* LOGOUT */
+
+document
+    .getElementById("logoutBtn")
+    .addEventListener("click", async () => {
+
+        try {
+
+            await auth.signOut();
+
+            showToast("Logged out successfully.");
+
+        } catch {
+
+            showToast("Logout failed.");
+        }
+    });
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+auth.onAuthStateChanged(async user => {
+
+    currentUser = user || null;
+
+    const loginBtn =
+        document.getElementById("loginBtn");
+
+    const userMenu =
+        document.getElementById("userMenu");
+
+    const userName =
+        document.getElementById("userName");
+
+    if (!user) {
+
+        loginBtn.style.display = "inline-flex";
+        userMenu.style.display = "none";
+        userName.textContent = "";
+
+        return;
+    }
+
+    loginBtn.style.display = "none";
+    userMenu.style.display = "flex";
+
+    let name =
+        user.displayName ||
+        "";
+
+    if (!name) {
+
+        try {
+
+            const snapshot =
+                await db
+                    .ref("users/" + user.uid)
+                    .once("value");
+
+            name =
+                snapshot.val()?.name ||
+                user.email ||
+                "User";
+
+        } catch {
+
+            name =
+                user.email ||
+                "User";
+        }
+    }
+
+    userName.textContent = name;
+
+    /* Auto-fill support form */
+
+    document.getElementById("supportName")
+        .value =
+        name || "";
+
+    try {
+
+        const snapshot =
+            await db
+                .ref("users/" + user.uid)
+                .once("value");
+
+        const profile =
+            snapshot.val();
+
+        if (profile?.whatsapp) {
+
+            document
+                .getElementById("supportWhatsapp")
+                .value =
+                profile.whatsapp;
+        }
+
+    } catch {
+        /* Ignore profile loading error */
+    }
+});
+
+
+/* =========================================================
+   SUPPORT FORM
+========================================================= */
+
+document
+    .getElementById("supportForm")
+    .addEventListener("submit", async event => {
+
+        event.preventDefault();
+
+        const name =
+            document.getElementById("supportName")
+                .value.trim();
+
+        const whatsapp =
+            document.getElementById("supportWhatsapp")
+                .value.trim();
+
+        const message =
+            document.getElementById("supportMessage")
+                .value.trim();
+
+        const button =
+            document.getElementById("supportSubmit");
+
+        if (!name || !message) {
+
+            showToast(
+                "Name এবং message অবশ্যই দিতে হবে।"
+            );
+
+            return;
+        }
+
+        try {
+
+            setButtonLoading(
+                button,
+                true,
+                "Sending...",
+                "Send Message"
+            );
+
+            const ticketRef =
+                db.ref("support-tickets").push();
+
+            await ticketRef.set({
+                uid: currentUser
+                    ? currentUser.uid
+                    : null,
+
+                name: name,
+
+                whatsapp: whatsapp,
+
+                message: message,
+
+                status: "open",
+
+                createdAt:
+                    firebase.database.ServerValue.TIMESTAMP
+            });
+
+            event.target.reset();
+
+            if (currentUser) {
+
+                document.getElementById("supportName")
+                    .value =
+                    currentUser.displayName ||
+                    currentUser.email ||
+                    "";
+            }
+
+            showToast(
+                "আপনার message successfully পাঠানো হয়েছে।"
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                "Message পাঠানো যায়নি। আবার চেষ্টা করুন।"
+            );
+
+        } finally {
+
+            setButtonLoading(
+                button,
+                false,
+                "Sending...",
+                "Send Message"
+            );
+        }
+    });
+
+
+/* =========================================================
+   VISITOR COUNT
+========================================================= */
+
+function updateVisitorCount() {
+
+    const ref =
+        db.ref("visitorCount");
+
+    ref.transaction(current => {
+
+        if (typeof current === "number") {
+            return current + 1;
+        }
+
+        return 1;
+
+    }, (error, committed, snapshot) => {
+
+        if (error) {
+
+            console.error(
+                "Visitor count error:",
+                error
+            );
+
+            return;
+        }
+
+        if (committed && snapshot) {
+
+            document.getElementById("visitorCount")
+                .textContent =
+                toBanglaDigits(
+                    snapshot.val()
+                );
+        }
+    });
+}
+
+
+/* =========================================================
+   FIREBASE DATA LOADERS
+========================================================= */
+
+function loadLessons() {
+
+    db.ref("lessons").on(
+        "value",
+
+        snapshot => {
+
+            const data =
+                snapshot.val();
+
+            lessons =
+                data &&
+                typeof data === "object"
+                    ? data
+                    : demoLessons;
+
+            renderLessons();
+        },
+
+        error => {
+
+            console.error(
+                "Lessons load error:",
+                error
+            );
+
+            lessons = demoLessons;
+
+            renderLessons();
+        }
+    );
+}
+
+
+function loadNews() {
+
+    db.ref("news").on(
+        "value",
+
+        snapshot => {
+
+            const data =
+                snapshot.val();
+
+            news =
+                data &&
+                typeof data === "object"
+                    ? data
+                    : demoNews;
+
+            renderNews();
+        },
+
+        error => {
+
+            console.error(
+                "News load error:",
+                error
+            );
+
+            news = demoNews;
+
+            renderNews();
+        }
+    );
+}
+
+
+function loadAbout() {
+
+    db.ref("about").on(
+        "value",
+
+        snapshot => {
+
+            const data =
+                snapshot.val();
+
+            aboutData =
+                data &&
+                typeof data === "object"
+                    ? data
+                    : demoAbout;
+
+            renderAbout(aboutData);
+        },
+
+        error => {
+
+            console.error(
+                "About load error:",
+                error
+            );
+
+            aboutData = demoAbout;
+
+            renderAbout(aboutData);
+        }
+    );
+}
+
+
+function loadZoom() {
+
+    db.ref("settings/zoom").on(
+        "value",
+
+        snapshot => {
+
+            zoomData =
+                snapshot.val() || {};
+
+            renderZoom(zoomData);
+        },
+
+        error => {
+
+            console.error(
+                "Zoom settings error:",
+                error
+            );
+
+            renderZoom({});
+        }
+    );
+}
+
+
+/* =========================================================
+   GLOBAL ESC KEY
+========================================================= */
+
+document.addEventListener("keydown", event => {
+
+    if (event.key !== "Escape") return;
+
+    const lessonModal =
+        document.getElementById("lessonModal");
+
+    const authModal =
+        document.getElementById("authModal");
+
+    if (lessonModal.classList.contains("show")) {
+        closeLessonModal();
+    }
+
+    if (authModal.classList.contains("show")) {
+        closeAuthModal();
+    }
+});
+
+
+/* =========================================================
+   IMAGE FALLBACK
+========================================================= */
+
+document
+    .getElementById("profileImage")
+    .addEventListener("error", event => {
+
+        event.target.src =
+            "https://placehold.co/600x600/111e31/f5c451?text=Hossain";
+    });
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+document.getElementById("currentYear")
+    .textContent =
+    new Date().getFullYear();
+
+renderAbout(demoAbout);
+renderLessons();
+renderNews();
+renderZoom({});
+
+loadLessons();
+loadNews();
+loadAbout();
+loadZoom();
+
+updateVisitorCount();
+
+</script>
+
+</body>
+</html>
